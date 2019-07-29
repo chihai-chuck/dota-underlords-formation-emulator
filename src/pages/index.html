@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <script src="../controllers/lib/vue.min.js"></script>
+    <script src="../controllers/base.js"></script>
+    <link rel="stylesheet" href="../styles/heybox-shim.less">
+    <link rel="stylesheet" href="../styles/index.less">
+    <!-- inject:css -->
+    <!-- endinject -->
+</head>
+
+<body>
+    <div class="dota-underlords-formation-emulator">
+        <p class="loading" v-cloak></p>
+        <div class="formation-box">
+            <p class="title">阵容模拟<em>单击移动 长按添加装备</em><button>清空棋盘</button></p>
+            <ul class="chessboard">
+                <li v-for="n in data.chessboard">
+                    <img src="" v-if="n">
+                </li>
+            </ul>
+        </div>
+        <div class="equipment">
+            <div class="add-list">
+                <span>添加<br>装备</span>
+                <div class="item">
+                    <img src="" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../controllers/index.js"></script>
+    <!-- inject:js -->
+    <!-- endinject -->
+</body>
+</html>

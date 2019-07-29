@@ -1,0 +1,17 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "modules": false,
+                "targets": {
+                    "browsers": [
+                        "Chrome >= 20",
+                        "iOS >= 9",
+                        "Android > 4"
+                    ]
+                }
+            }
+        ]
+    ]
+}

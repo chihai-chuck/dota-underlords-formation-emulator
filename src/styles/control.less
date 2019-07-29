@@ -1,0 +1,139 @@
+.absolute(@position) {
+    position: absolute;
+    margin: auto;
+    & when (@position=c), (@position=cm) {
+        left: 0;
+        right: 0;
+    }
+    & when (@position=m), (@position=cm) {
+        top: 0;
+        bottom: 0;
+    }
+}
+
+.align(@position, @direction:1) {
+    display: flex;
+    & when (@position=v-center), (@position=center) {
+        flex-wrap: wrap;
+        align-items: center;
+        align-content: center;
+    }
+    & when (@position=h-center), (@position=center) {
+        justify-content: center;
+    }
+    & when (@position=top) {
+        align-items: flex-start;
+    }
+    & when (@position=bottom) {
+        align-items: flex-end;
+    }
+    & when (@position=left) {
+        justify-content: flex-start;
+    }
+    & when (@position=right) {
+        justify-content: flex-end;
+    }
+    & when (@position=h-space-between), (@position=v-space-between) {
+        justify-content: space-between;
+    }
+    & when (@position=h-space-around), (@position=v-space-around) {
+        justify-content: space-around;
+    }
+    & when (@position=v-space-between), (@position=v-space-around) {
+        flex-direction: column;
+    }
+    & when (iskeyword(@direction)) {
+        flex-direction: @direction;
+    }
+}
+
+.clear-float() {
+    zoom: 1;
+    &:after {
+        display: block;
+        content: "";
+        height: 0;
+        visibility: hidden;
+        clear: both;
+    }
+}
+
+.linearGradient(@colorStar, @colorEnd, @direction:right, @starX:0%, @starY:100%, @clip:background) {
+    background: ~"linear-gradient(to @{direction}, @{colorStar} @{starX}, @{colorEnd} @{starY})";
+    & when (@clip=text) {
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    }
+}
+
+.split-line(@direction:bottom, @color:#ddd, @radius:0, @position:relative) {
+    position: @position;
+    &::after {
+        content: "" !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        box-sizing: border-box;
+        width: 200%;
+        height: calc(200% - 1px);
+        transform: scale(.5, .5);
+        transform-origin: 0 0;
+        pointer-events: none;
+        border-radius: 2 * @radius;
+        .split-lines(0) {
+            border-top: 1PX solid @color;
+            border-left: 1PX solid @color;
+        }
+        .split-lines(1) {
+            border-top: 1PX solid @color;
+            border-right: 1PX solid @color;
+        }
+        .split-lines(2) {
+            border-bottom: 1PX solid @color;
+            border-left: 1PX solid @color;
+        }
+        .split-lines(3) {
+            border-bottom: 1PX solid @color;
+            border-right: 1PX solid @color;
+        }
+        .split-lines(4) {
+            border-top: 1PX solid @color;
+            border-bottom: 1PX solid @color;
+        }
+        .split-lines(5) {
+            border-left: 1PX solid @color;
+            border-right: 1PX solid @color;
+        }
+        .split-lines(6) {
+            border-top: 1PX solid @color;
+            .split-lines(5);
+        }
+        .split-lines(7) {
+            border-bottom: 1PX solid @color;
+            .split-lines(5);
+        }
+        .split-lines(8) {
+            border-left: 1PX solid @color;
+            .split-lines(4);
+        }
+        .split-lines(9) {
+            border-right: 1PX solid @color;
+            .split-lines(4);
+        }
+        & when (iskeyword(@direction)) {
+            border-@{direction}: 1PX solid @color;
+            & when (@direction=all) {
+                border: 1PX solid @color;
+            }
+        }
+        & when (isnumber(@direction)) {
+            .split-lines(@direction);
+
+        }
+    }
+}
+
+.shadow(@h, @v, @blur:0, @color) {
+    filter: drop-shadow(@h @v @blur @color);
+}
