@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <script src="../controllers/lib/vue.min.js"></script>
     <script src="../controllers/base.js"></script>
+    <link rel="stylesheet" href="../styles/icon.less">
     <link rel="stylesheet" href="../styles/heybox-shim.less">
     <link rel="stylesheet" href="../styles/index.less">
     <!-- inject:css -->
@@ -21,15 +22,45 @@
                     <img src="" v-if="n">
                 </li>
             </ul>
-        </div>
-        <div class="equipment">
-            <div class="add-list">
-                <span>添加<br>装备</span>
-                <div class="item">
-                    <img src="" alt="">
+            <div class="equipment">
+                <div class="add-list">
+                    <span>添加<br>装备</span>
+                    <div class="item">
+                        <img src="" alt="">
+                        <img src="" alt="">
+                    </div>
+                    <em>移除棋子</em>
                 </div>
+                <button>确认添加</button>
             </div>
+            <dl class="equipment-list">
+                <dt>装备列表</dt>
+                <dd>
+                    <img src="" alt="">
+                    <img src="" alt="">
+                </dd>
+            </dl>
         </div>
+        <dl class="feature-box">
+            <dt>英雄特性</dt>
+            <dd>
+                <div class="sign"></div>
+                <ul class="sign-num">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+                <div class="detail">
+                    <p>太古单位在受到攻击时有30%几率对近战攻击者缴械4秒</p>
+                    <ul>
+                        <li></li>
+                    </ul>
+                </div>
+            </dd>
+        </dl>
     </div>
 
     <script src="../controllers/index.js"></script>
