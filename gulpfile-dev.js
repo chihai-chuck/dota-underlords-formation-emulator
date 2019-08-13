@@ -104,7 +104,13 @@ gulp.task('serve', () => {
             livereload: true,
             open: false,
             host: '0.0.0.0',
-            port: 55105
+            port: 55105,
+            proxies: [
+                {
+                    source: "/api",
+                    target: "https://api.xiaoheihe.cn"
+                }
+            ]
         }));
 });
 

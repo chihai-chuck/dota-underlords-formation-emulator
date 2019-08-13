@@ -19,7 +19,7 @@
             <p class="title">阵容模拟<em>单击移动 长按添加装备</em><button>清空棋盘</button></p>
             <ul class="chessboard">
                 <li v-for="n in data.chessboard">
-                    <img src="" v-if="n">
+                    <img :src="data.heroes[n]['id_img']" v-if="n">
                 </li>
             </ul>
             <div class="equipment">
@@ -44,7 +44,7 @@
         <dl class="feature-box">
             <dt>英雄特性</dt>
             <dd>
-                <div class="sign"></div>
+                <i></i>
                 <ul class="sign-num">
                     <li></li>
                     <li></li>
@@ -56,7 +56,8 @@
                 <div class="detail">
                     <p>太古单位在受到攻击时有30%几率对近战攻击者缴械4秒</p>
                     <ul>
-                        <li></li>
+                        <li>变体精灵</li>
+                        <li>变体精灵</li>
                     </ul>
                 </div>
             </dd>
