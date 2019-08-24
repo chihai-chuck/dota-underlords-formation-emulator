@@ -16,33 +16,53 @@
     <div class="dota-underlords-formation-emulator">
         <p class="loading" v-cloak></p>
         <div class="formation-box">
-            <p class="title">阵容模拟<em>单击移动 长按添加装备</em><button>清空棋盘</button></p>
+            <p class="title">
+                阵容模拟<em v-pre>单击移动 长按添加装备</em>
+                <button @click="chessboardClear">清空棋盘</button>
+            </p>
             <ul class="chessboard">
-                <li v-for="n in data.chessboard">
-                    <img :src="data.heroes[n]['id_img']" v-if="n">
+                <li v-for="(n,index) in data.chessboard"
+                    :class="{active:data.chessboardChangeIndex===index}"
+                    :key="index"
+                    @touchstart="heroesItemSelectStart(index)"
+                    @touchmove="heroesItemSelectMove"
+                    @touchend="heroesItemSelectEnd(index)">
+                    <transition name="vue-trans-scale">
+                        <img :src="data.heroes[n].id_img" v-if="n">
+                    </transition>
                 </li>
             </ul>
-            <div class="equipment">
-                <div class="add-list">
-                    <span>添加<br>装备</span>
-                    <div class="item">
-                        <img src="" alt="">
-                        <img src="" alt="">
+            <transition name="vue-trans-equipment-box">
+                <div class="equipment-box" v-if="data.chessboardActiveHeroes">
+                    <div class="equipment">
+                        <div class="add-list">
+                            <span>添加<br>装备</span>
+                            <div class="item">
+                                <img :src="data.heroes[this.data.chessboardActiveHeroes].id_img">
+                                <div class="item-add"
+                                     @click="visible.itemsList=true">
+                                    <div class="item-img"
+                                         :style="{backgroundImage:`url(${data.items[data.chessboardActiveItems].id_img})`}"
+                                         v-if="data.chessboardActiveItems"></div>
+                                </div>
+                            </div>
+                            <em @click="heroesRemove">移除棋子</em>
+                        </div>
+                        <button @click="heroesItemsAdd">确认添加</button>
                     </div>
-                    <em>移除棋子</em>
                 </div>
-                <button>确认添加</button>
-            </div>
-            <dl class="equipment-list">
-                <dt>装备列表</dt>
-                <dd>
-                    <img src="" alt="">
-                    <img src="" alt="">
+            </transition>
+            <dl class="equipment-list" v-if="heroesHaveItemLength">
+                <dt v-pre>装备列表</dt>
+                <dd v-for="(hi,key,index) in data.heroesItem"
+                    :key="index">
+                    <img :src="data.heroes[key].id_img">
+                    <img :src="data.items[hi].id_img">
                 </dd>
             </dl>
         </div>
         <dl class="feature-box">
-            <dt>英雄特性</dt>
+            <dt v-pre>英雄特性</dt>
             <dd>
                 <i></i>
                 <ul class="sign-num">
@@ -62,6 +82,54 @@
                 </div>
             </dd>
         </dl>
+
+        <transition name="vue-trans-fade">
+            <div ref="heroesListPopup"
+                 class="dota-underlords-formation-emulator-popup"
+                 @touchstart.stop="heroesListClose"
+                 v-if="visible.heroesList">
+                <div class="dota-underlords-formation-emulator-popup-bg"></div>
+                <div ref="heroesListPopupContent"
+                     class="dota-underlords-formation-emulator-popup-content">
+                    <div class="dota-underlords-formation-emulator-heroes-list">
+                        <p v-pre>添加你的英雄</p>
+                        <div class="list">
+                            <dl v-for="(hpg,key,index) in data.heroesPriceGroup"
+                                :key="index">
+                                <dt v-text="`费用：${key}`"></dt>
+                                <dd v-for="heroes in hpg"
+                                    :style="{backgroundImage:`url(${heroes.id_img})`}"
+                                    @click="setHeroes(heroes)"></dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+        <transition name="vue-trans-fade">
+            <div ref="itemsListPopup"
+                 class="dota-underlords-formation-emulator-popup"
+                 @touchstart.stop="itemsListClose"
+                 v-if="visible.itemsList">
+                <div class="dota-underlords-formation-emulator-popup-bg"></div>
+                <div ref="itemsListPopupContent"
+                     class="dota-underlords-formation-emulator-popup-content">
+                    <div class="dota-underlords-formation-emulator-heroes-list">
+                        <p v-pre>添加物品</p>
+                        <div class="list">
+                            <dl v-for="(ilg,key,index) in data.itemsLevelGroup"
+                                :key="index">
+                                <dt v-text="`梯队：${key}`"></dt>
+                                <dd v-for="items in ilg"
+                                    :style="{backgroundImage:`url(${items.id_img})`}"
+                                    @click="setItems(items)"></dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
     </div>
 
     <script src="../controllers/index.js"></script>

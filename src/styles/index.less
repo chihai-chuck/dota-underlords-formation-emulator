@@ -7,6 +7,8 @@
     left: 0;
     width: 100vw;
     height: 100vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding-top: 4px;
     background-color: #f7f8f9;
     .loading {
@@ -65,8 +67,12 @@
                 width: 44px;
                 height: 44px;
                 padding: 4px;
+                transition: padding .3s;
                 &:nth-child(8n) {
                     width: 43px;
+                }
+                &.active {
+                    padding: 0;
                 }
                 > img {
                     display: block;
@@ -77,11 +83,24 @@
                 }
             }
         }
+        .vue-trans-equipment-box-enter-active,
+        .vue-trans-equipment-box-leave-active {
+            overflow: hidden;
+            height: 106px;
+            transition: height .3s;
+        }
+        .vue-trans-equipment-box-enter,
+        .vue-trans-equipment-box-leave-to {
+            height: 0;
+        }
+        .equipment-box {
+            width: 100%;
+            background-color: #f7f8f9;
+        }
         .equipment {
             width: 100%;
             height: 106px;
             padding: 12px;
-            background-color: #f7f8f9;
             .add-list {
                 display: flex;
                 position: relative;
@@ -98,19 +117,43 @@
                 .item {
                     display: flex;
                     flex: 1;
-                    > img {
-                        display: block;
+                    > img,
+                    .item-add {
                         width: 34px;
                         height: 100%;
-                        margin-right: 24px;
                         border-radius: 2px;
+                    }
+                    > img {
+                        display: block;
+                        margin-right: 24px;
+                    }
+                    .item-add {
+                        position: relative;
+                        overflow: hidden;
+                        &::before {
+                            .align(center);
+                            content: '+';
+                            width: 100%;
+                            height: 100%;
+                            border: 1px dashed #ddd;
+                            font-size: 18px;
+                            color: #ddd;
+                        }
+                        .item-img {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background-repeat: no-repeat;
+                            background-size: cover;
+                        }
                     }
                 }
                 > em {
                     position: absolute;
                     right: 0;
                     bottom: 0;
-                    width: 40px;
                     height: 14px;
                     text-align: center;
                     line-height: 14px;
@@ -130,7 +173,7 @@
             }
         }
         .equipment-list {
-            .clear-float();
+            .clear-float;
             width: 100%;
             margin-top: 12px;
             > dt {
@@ -142,6 +185,8 @@
                 color: #14191e;
             }
             > dd {
+                .align(v-center);
+                .align(h-space-between);
                 float: left;
                 width: 80px;
                 height: 42px;
@@ -150,6 +195,18 @@
                 background-color: #f7f8f9;
                 &:not(:nth-child(5n)) {
                     margin-right: 10px;
+                }
+                > img {
+                    display: block;
+                    border-radius: 2px;
+                    &:first-child {
+                        width: 26px;
+                        height: 26px;
+                    }
+                    &:last-child {
+                        width: 20px;
+                        height: 20px;
+                    }
                 }
             }
         }
@@ -189,5 +246,116 @@
                 }
             }
         }
+    }
+    &-popup {
+        z-index: 15000;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        > * {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        &-bg {
+            z-index: 1;
+            background-color: rgba(0,0,0,.55);
+            transition: opacity .3s;
+        }
+        &-content {
+            z-index: 2;
+            .dota-underlords-formation-emulator-heroes-list {
+                .absolute(cm);
+                .shadow(0, 0, 5px, rgba(0,0,0,.5));
+                display: flex;
+                flex-direction: column;
+                width: 300px;
+                height: 350px;
+                padding: 20px 5px 20px 20px;
+                border-radius: 10px;
+                background-color: #fff;
+                transition: none .5s;
+                transition-property: opacity, transform;
+                > p {
+                    width: 100%;
+                    height: 30px;
+                    line-height: 30px;
+                    text-align: center;
+                    font-weight: bold;
+                    font-size: 16px;
+                    color: #14191E;
+                }
+                .list {
+                    flex: 1;
+                    width: 100%;
+                    padding-right: 15px;
+                    overflow-y: auto;
+                    -webkit-overflow-scrolling: touch;
+                    > dl {
+                        .clear-float;
+                        width: 100%;
+                        > dt {
+                            width: 100%;
+                            height: 20px;
+                            margin-bottom: 10px;
+                            line-height: 20px;
+                            font-size: 14px;
+                            color: #14191e;
+                        }
+                        > dd {
+                            float: left;
+                            width: 44px;
+                            height: 44px;
+                            margin-bottom: 10px;
+                            border-radius: 5px;
+                            background-color: #ccc;
+                            background-size: cover;
+                            background-repeat: no-repeat;
+                            &:not(:nth-of-type(5n)) {
+                                margin-right: 10px;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+    .vue-trans-fade-enter-active,
+    .vue-trans-fade-leave-active {
+        opacity: 1;
+        transition: none .5s;
+        transition-property: opacity, transform;
+        .dota-underlords-formation-emulator-popup-bg {
+            opacity: 1;
+        }
+        .dota-underlords-formation-emulator-heroes-list {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+    .vue-trans-fade-enter,
+    .vue-trans-fade-leave-to {
+        opacity: 1;
+        .dota-underlords-formation-emulator-popup-bg {
+            opacity: 0;
+        }
+        .dota-underlords-formation-emulator-heroes-list {
+            opacity: 0;
+            transform: translate3d(0, 40px, 0);
+        }
+    }
+    .vue-trans-scale-enter-active,
+    .vue-trans-scale-leave-active {
+        transform: scale3d(1);
+        transition: transform .3s;
+    }
+    .vue-trans-scale-enter,
+    .vue-trans-scale-leave-to {
+        transform: scale3d(0, 0, 0);
     }
 }
