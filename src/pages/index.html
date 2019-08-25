@@ -61,10 +61,11 @@
                 </dd>
             </dl>
         </div>
-        <dl class="feature-box">
+        <dl class="feature-box" v-if="chessboardCount">
             <dt v-pre>英雄特性</dt>
-            <dd>
-                <i></i>
+            <dd v-for="(heroes,key,index) in data.chessboardHeroesAlliances"
+                :key="index">
+                <i :class="'icon-'+key" :style="{backgroundColor:config.alliancesColor[key]}"></i>
                 <ul class="sign-num">
                     <li></li>
                     <li></li>
@@ -74,7 +75,7 @@
                     <li></li>
                 </ul>
                 <div class="detail">
-                    <p>太古单位在受到攻击时有30%几率对近战攻击者缴械4秒</p>
+                    <p v-text=""></p>
                     <ul>
                         <li>变体精灵</li>
                         <li>变体精灵</li>

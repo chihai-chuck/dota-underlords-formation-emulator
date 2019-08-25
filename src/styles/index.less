@@ -225,16 +225,18 @@
             color: #14191e;
         }
         > dd {
+            display: flex;
             width: 100%;
             padding: 10px 0;
             > i {
                 .align(center);
                 width: 34px;
                 height: 34px;
-                background-color: currentColor;
                 border-radius: 2px;
-                font-size: 20px;
-                color: #fff;
+                &::before {
+                    font-size: 20px;
+                    color: #fff;
+                }
             }
             .sign-num {
                 width: 16px;
@@ -243,6 +245,13 @@
                 > li {
                     width: 4px;
                     background-color: currentColor;
+                }
+            }
+            .detail {
+                flex: 1;
+                > p {
+                    width: 100%;
+                    font-size: 12px;
                 }
             }
         }

@@ -55,7 +55,9 @@ window.a = new Vue({
                     "3": [],
                     "4": [],
                     "5": []
-                }
+                },
+                chessboardHeroesAlliances: {},
+                alliances: {}
             },
             visible: {
                 heroesList: false,
@@ -74,11 +76,25 @@ window.a = new Vue({
     watch: {
         "data.chessboardActiveHeroes"(heroes) {
             this.data.chessboardActiveItems = this.data.heroesItem[heroes] || "";
+        },
+        "data.chessboard"(chessboard) {
+            const temp = {};
+            chessboard.filter(i => i).forEach(heroes => {
+                for(let alliances of this.data.heroes[heroes].api_alliances) {
+                    if(temp[alliances]) {
+                        temp[alliances].push(heroes);
+                    } else {
+                        temp[alliances] = [heroes];
+                    }
+                }
+            });
+            this.data.chessboardHeroesAlliances = temp;
         }
     },
     created() {
         this.setChessboard();
         this.getHeroesData();
+        this.getAlliancesData();
         this.getItemsData();
     },
     methods: {
@@ -91,24 +107,41 @@ window.a = new Vue({
                 const keys = data[0];
                 const list = data.slice(3);
                 const temp = {};
-                list.forEach(heroes => {
+                for(let heroes of list) {
                     const params = {};
                     heroes.forEach((item, index) => {
                         params[keys[index]] = item;
                     });
                     params.api_alliances1 = params.api_alliances1.split(",");
                     params.api_alliances2 = params.api_alliances2.split(",");
-                    params.api_alliances = params.api_alliances1.push(...params.api_alliances2);
+                    params.api_alliances = [...params.api_alliances1, ...params.api_alliances2];
                     params.id_img = this.config.imageUrlPrefix + params.id_img + this.config.imageUrlSuffix;
                     params.skill_img = this.config.imageUrlPrefix + params.skill_img + this.config.imageUrlSuffix;
                     temp[params.api_id] = params;
                     this.data.heroesPriceGroup[params.Grade1_buy].push(params);
                     this.imgPreLoad(params.id_img);
                     // this.imgPreLoad(params.skill_img);
-                });
+                }
                 console.log(temp)
                 console.log(this.data.heroesPriceGroup)
                 this.data.heroes = temp;
+            });
+        },
+        getAlliancesData() {
+            fetch(this.config.apiUrlPrefix + "311021").then(res => res.json()).then(res => {
+                const data = res.result.table;
+                const keys = data[0];
+                const list = data.slice(3);
+                const temp = {};
+                for(let alliances of list) {
+                    const params = {};
+                    alliances.forEach((item, index) => {
+                        params[keys[index]] = item;
+                    });
+                    temp[params.api_id] = params;
+                }
+                console.log(temp)
+                this.data.alliances = temp;
             });
         },
         getItemsData() {
@@ -117,7 +150,7 @@ window.a = new Vue({
                 const keys = data[0];
                 const list = data.slice(3);
                 const temp = {};
-                list.forEach(items => {
+                for(let items of list) {
                     const params = {};
                     items.forEach((item, index) => {
                         params[keys[index]] = item;
@@ -128,7 +161,7 @@ window.a = new Vue({
                         this.data.itemsLevelGroup[params.tier].push(params);
                     }
                     this.imgPreLoad(params.id_img);
-                });
+                }
                 console.log(temp)
                 console.log(this.data.itemsLevelGroup)
                 this.data.items = temp;
@@ -148,8 +181,8 @@ window.a = new Vue({
             const heroes = this.data.chessboard[index];
             if(heroes) {
                 if(this.data.chessboardChangeIndex > -1) {
-                    this.data.chessboard[index] = this.data.chessboard[this.data.chessboardChangeIndex];
-                    this.data.chessboard[this.data.chessboardChangeIndex] = heroes;
+                    this.$set(this.data.chessboard, index, this.data.chessboard[this.data.chessboardChangeIndex]);
+                    this.$set(this.data.chessboard, this.data.chessboardChangeIndex, heroes);
                     this.data.chessboardChangeIndex = -1;
                 } else {
                     this.data.chessboardChangeIndex = index;
@@ -165,7 +198,7 @@ window.a = new Vue({
             }
         },
         setHeroes(heroes) {
-            this.data.chessboard[this.data.chessboardSelectIndex] = heroes.api_id;
+            this.$set(this.data.chessboard, this.data.chessboardSelectIndex, heroes.api_id);
             this.visible.heroesList = false;
         },
         setItems(items) {
@@ -177,7 +210,9 @@ window.a = new Vue({
             this.config.heroesItemSelectTimer = -1;
             this.config.heroesItemSelectTimer = setTimeout(() => {
                 this.config.heroesItemSelectTimer = -1;
-                this.data.chessboardActiveHeroes = this.data.chessboard[index];
+                if(this.data.chessboard[index]) {
+                    this.data.chessboardActiveHeroes = this.data.chessboard[index];
+                }
             },600);
         },
         heroesItemSelectMove() {
@@ -191,7 +226,7 @@ window.a = new Vue({
             }
         },
         heroesRemove() {
-            this.data.chessboard[this.data.chessboard.indexOf(this.data.chessboardActiveHeroes)] = 0;
+            this.$set(this.data.chessboard, this.data.chessboard.indexOf(this.data.chessboardActiveHeroes), 0);
             this.$delete(this.data.heroesItem, this.data.chessboardActiveHeroes);
             this.data.chessboardActiveHeroes = "";
         },
@@ -214,8 +249,7 @@ window.a = new Vue({
             }));
         },
         imgPreLoad(url) {
-            const $img = document.createElement("img");
-            $img.src = url;
+            document.createElement("img").src = url;
         }
     }
 });
