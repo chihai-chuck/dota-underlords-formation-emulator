@@ -55,7 +55,7 @@ window.a = new Vue({
                     "4": [],
                     "5": []
                 },
-                chessboardHeroesAlliances: {},
+                chessboardHeroesAlliances: [],
                 alliances: {}
             },
             visible: {
@@ -70,6 +70,13 @@ window.a = new Vue({
         },
         heroesHaveItemList() {
             return this.data.chessboard.filter(i => i && i.items);
+        },
+        chessboardHeroesAlliancesCount() {
+            const temp = {};
+            for(let alliances of this.data.chessboardHeroesAlliances) {
+                temp[alliances[0]] = [...new Set(alliances[1])].length;
+            }
+            return temp;
         }
     },
     watch: {
@@ -87,7 +94,7 @@ window.a = new Vue({
                     }
                 }
             });
-            this.$set(this.data, "chessboardHeroesAlliances", temp);
+            this.$set(this.data, "chessboardHeroesAlliances", Object.entries(temp));
         }
     },
     created() {
@@ -258,6 +265,25 @@ window.a = new Vue({
         },
         imgPreLoad(url) {
             document.createElement("img").src = url;
+        },
+        chessboardHeroesAlliancesSort(alliances) {
+            return JSON.parse(JSON.stringify(alliances)).sort(a => {
+                const count = this.chessboardHeroesAlliancesCount[a[0]];
+                const minCount = this.data.alliances[a[0]].api_minHeroesCount;
+                if(count > minCount) {
+                    return 1;
+                } else if(count < minCount) {
+                    return -1;
+                }
+                return 0;
+            }).reverse();
+        },
+        chessboardHeroesAlliancesDesc(alliances) {
+            const desc = this.data.alliances[alliances].api_des;
+            const levels = Object.keys(desc).map(Number);
+            const index = levels.findIndex(n=>this.chessboardHeroesAlliancesCount[alliances]<n);
+            console.log(desc)
+            return desc[levels[index>0?index-1:0]];
         }
     }
 });

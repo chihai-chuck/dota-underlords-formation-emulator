@@ -63,20 +63,18 @@
         </div>
         <dl class="feature-box" v-if="chessboardCount">
             <dt v-pre>英雄特性</dt>
-            <dd v-for="(heroesList,key,index) in data.chessboardHeroesAlliances"
-                :key="index">
-                <i :class="'icon-'+key" :style="{backgroundColor:config.alliancesColor[key]}"></i>
-                <ul class="sign-num">
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
+            <dd v-for="(heroesList,index) in chessboardHeroesAlliancesSort(data.chessboardHeroesAlliances)"
+                :key="index"
+                :class="{invalid:chessboardHeroesAlliancesCount[heroesList[0]]<data.alliances[heroesList[0]].api_minHeroesCount}">
+                <i :class="'icon-'+heroesList[0]" :style="{backgroundColor:config.alliancesColor[heroesList[0]]}"></i>
+                <ul :class="['sign-num','type-'+data.alliances[heroesList[0]].api_maxHeroesCount]"
+                    :style="{color:config.alliancesColor[heroesList[0]]}">
+                    <li v-for="n in data.alliances[heroesList[0]].api_maxHeroesCount"
+                        :class="{active:n<=chessboardHeroesAlliancesCount[heroesList[0]]}"></li>
                 </ul>
                 <div class="detail">
-                    <p v-text="'阿斯达萨达所多撒阿萨德阿斯达萨达所多撒阿萨德阿斯达萨达所多撒阿萨德'"></p>
-                    <ul><li v-for="(heroes,index) in heroesList"
+                    <p v-text="chessboardHeroesAlliancesDesc(heroesList[0])"></p>
+                    <ul><li v-for="(heroes,index) in heroesList[1]"
                             :key="index"
                             :style="{backgroundImage:`url(${data.heroes[heroes].id_img})`}"
                             v-text="data.heroes[heroes].id"></li></ul>
