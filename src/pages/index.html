@@ -21,24 +21,24 @@
                 <button @click="chessboardClear">清空棋盘</button>
             </p>
             <ul class="chessboard">
-                <li v-for="(n,index) in data.chessboard"
+                <li v-for="(chessman,index) in data.chessboard"
                     :class="{active:data.chessboardChangeIndex===index}"
                     :key="index"
                     @touchstart="heroesItemSelectStart(index)"
                     @touchmove="heroesItemSelectMove"
                     @touchend="heroesItemSelectEnd(index)">
                     <transition name="vue-trans-scale">
-                        <img :src="data.heroes[n].id_img" v-if="n">
+                        <img :src="chessman.avatar" v-if="chessman">
                     </transition>
                 </li>
             </ul>
             <transition name="vue-trans-equipment-box">
-                <div class="equipment-box" v-if="data.chessboardActiveHeroes">
+                <div class="equipment-box" v-if="data.chessboardActiveIndex>-1">
                     <div class="equipment">
                         <div class="add-list">
                             <span>添加<br>装备</span>
                             <div class="item">
-                                <img :src="data.heroes[this.data.chessboardActiveHeroes].id_img">
+                                <img :src="data.chessboard[data.chessboardActiveIndex].avatar">
                                 <div class="item-add"
                                      @click="visible.itemsList=true">
                                     <div class="item-img"
@@ -48,22 +48,22 @@
                             </div>
                             <em @click="heroesRemove">移除棋子</em>
                         </div>
-                        <button @click="heroesItemsAdd">确认添加</button>
+                        <button @click="heroesItemsAdd" v-text="`确认${data.chessboard[data.chessboardActiveIndex].items?'修改':'添加'}`"></button>
                     </div>
                 </div>
             </transition>
-            <dl class="equipment-list" v-if="heroesHaveItemLength">
+            <dl class="equipment-list" v-if="heroesHaveItemList.length">
                 <dt v-pre>装备列表</dt>
-                <dd v-for="(hi,key,index) in data.heroesItem"
+                <dd v-for="(hi,index) in heroesHaveItemList"
                     :key="index">
-                    <img :src="data.heroes[key].id_img">
-                    <img :src="data.items[hi].id_img">
+                    <img :src="hi.avatar">
+                    <img :src="data.items[hi.items].id_img">
                 </dd>
             </dl>
         </div>
         <dl class="feature-box" v-if="chessboardCount">
             <dt v-pre>英雄特性</dt>
-            <dd v-for="(heroes,key,index) in data.chessboardHeroesAlliances"
+            <dd v-for="(heroesList,key,index) in data.chessboardHeroesAlliances"
                 :key="index">
                 <i :class="'icon-'+key" :style="{backgroundColor:config.alliancesColor[key]}"></i>
                 <ul class="sign-num">
@@ -75,11 +75,11 @@
                     <li></li>
                 </ul>
                 <div class="detail">
-                    <p v-text=""></p>
-                    <ul>
-                        <li>变体精灵</li>
-                        <li>变体精灵</li>
-                    </ul>
+                    <p v-text="'阿斯达萨达所多撒阿萨德阿斯达萨达所多撒阿萨德阿斯达萨达所多撒阿萨德'"></p>
+                    <ul><li v-for="(heroes,index) in heroesList"
+                            :key="index"
+                            :style="{backgroundImage:`url(${data.heroes[heroes].id_img})`}"
+                            v-text="data.heroes[heroes].id"></li></ul>
                 </div>
             </dd>
         </dl>
@@ -87,7 +87,7 @@
         <transition name="vue-trans-fade">
             <div ref="heroesListPopup"
                  class="dota-underlords-formation-emulator-popup"
-                 @touchstart.stop="heroesListClose"
+                 @tap.stop="heroesListClose"
                  v-if="visible.heroesList">
                 <div class="dota-underlords-formation-emulator-popup-bg"></div>
                 <div ref="heroesListPopupContent"
@@ -111,7 +111,7 @@
         <transition name="vue-trans-fade">
             <div ref="itemsListPopup"
                  class="dota-underlords-formation-emulator-popup"
-                 @touchstart.stop="itemsListClose"
+                 @tap.stop="itemsListClose"
                  v-if="visible.itemsList">
                 <div class="dota-underlords-formation-emulator-popup-bg"></div>
                 <div ref="itemsListPopupContent"

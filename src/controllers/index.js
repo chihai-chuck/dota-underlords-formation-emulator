@@ -3,7 +3,7 @@ window.a = new Vue({
     data() {
         return {
             config: {
-                apiUrlPrefix: location.origin + "/api/wiki/get_excel_data_for_dev/?wiki_id=1000000011&file_id=",
+                apiUrlPrefix: location.origin + "/wiki/get_excel_data_for_dev/?wiki_id=1000000011&file_id=",
                 imageUrlPrefix: "//cdn.max-c.com/wiki/1000000011/",
                 imageUrlSuffix: "?v=9999",
                 heroesItemSelectTimer: -1,
@@ -37,10 +37,9 @@ window.a = new Vue({
                 chessboard: [],
                 chessboardSelectIndex: -1,
                 chessboardChangeIndex: -1,
-                chessboardActiveHeroes: "",
+                chessboardActiveIndex: -1,
                 chessboardActiveItems: "",
                 heroes: {},
-                heroesItem: {},
                 heroesPriceGroup: {
                     "1": [],
                     "2": [],
@@ -69,26 +68,26 @@ window.a = new Vue({
         chessboardCount() {
             return this.data.chessboard.filter(i => i).length;
         },
-        heroesHaveItemLength() {
-            return Object.keys(this.data.heroesItem).length;
+        heroesHaveItemList() {
+            return this.data.chessboard.filter(i => i && i.items);
         }
     },
     watch: {
-        "data.chessboardActiveHeroes"(heroes) {
-            this.data.chessboardActiveItems = this.data.heroesItem[heroes] || "";
+        "data.chessboardActiveIndex"(index) {
+            this.data.chessboardActiveItems = this.data.chessboard[index] ? this.data.chessboard[index].items || "" : "";
         },
         "data.chessboard"(chessboard) {
             const temp = {};
-            chessboard.filter(i => i).forEach(heroes => {
-                for(let alliances of this.data.heroes[heroes].api_alliances) {
+            chessboard.filter(i => i).forEach(data => {
+                for(let alliances of this.data.heroes[data.heroes].api_alliances) {
                     if(temp[alliances]) {
-                        temp[alliances].push(heroes);
+                        temp[alliances].push(data.heroes);
                     } else {
-                        temp[alliances] = [heroes];
+                        temp[alliances] = [data.heroes];
                     }
                 }
             });
-            this.data.chessboardHeroesAlliances = temp;
+            this.$set(this.data, "chessboardHeroesAlliances", temp);
         }
     },
     created() {
@@ -99,7 +98,7 @@ window.a = new Vue({
     },
     methods: {
         setChessboard() {
-            this.data.chessboard = new Array(32).fill(0);
+            this.data.chessboard = new Array(32).fill();
         },
         getHeroesData() {
             fetch(this.config.apiUrlPrefix + "310739").then(res => res.json()).then(res => {
@@ -138,6 +137,7 @@ window.a = new Vue({
                     alliances.forEach((item, index) => {
                         params[keys[index]] = item;
                     });
+                    params.api_des = JSON.parse(params.api_des);
                     temp[params.api_id] = params;
                 }
                 console.log(temp)
@@ -178,27 +178,35 @@ window.a = new Vue({
             }
         },
         selectHeroes(index) {
-            const heroes = this.data.chessboard[index];
-            if(heroes) {
-                if(this.data.chessboardChangeIndex > -1) {
-                    this.$set(this.data.chessboard, index, this.data.chessboard[this.data.chessboardChangeIndex]);
-                    this.$set(this.data.chessboard, this.data.chessboardChangeIndex, heroes);
-                    this.data.chessboardChangeIndex = -1;
-                } else {
-                    this.data.chessboardChangeIndex = index;
+            let heroesData = this.data.chessboard[index];
+            if(this.data.chessboardChangeIndex > -1) {
+                this.$set(this.data.chessboard, index, this.data.chessboard[this.data.chessboardChangeIndex]);
+                this.$set(this.data.chessboard, this.data.chessboardChangeIndex, heroesData);
+                if(this.data.chessboardActiveIndex > -1) {
+                    this.data.chessboardActiveIndex = index;
+                    this.data.chessboardActiveItems = this.data.chessboard[index] ? this.data.chessboard[index].items || "" : "";
                 }
-            } else {
                 this.data.chessboardChangeIndex = -1;
-                if(this.chessboardCount >= 10) {
-                    this.alert("最多添加10个棋子");
+            } else {
+                if(heroesData) {
+                    this.data.chessboardChangeIndex = index;
                 } else {
-                    this.data.chessboardSelectIndex = index;
-                    this.visible.heroesList = true;
+                    if(this.chessboardCount >= 10) {
+                        this.alert("最多添加10个棋子");
+                    } else {
+                        this.data.chessboardSelectIndex = index;
+                        this.visible.heroesList = true;
+                    }
                 }
             }
         },
         setHeroes(heroes) {
-            this.$set(this.data.chessboard, this.data.chessboardSelectIndex, heroes.api_id);
+            this.$set(this.data.chessboard, this.data.chessboardSelectIndex, {
+                index: this.data.chessboardSelectIndex,
+                heroes: heroes.api_id,
+                avatar: heroes.id_img,
+                items: void 0
+            });
             this.visible.heroesList = false;
         },
         setItems(items) {
@@ -211,7 +219,7 @@ window.a = new Vue({
             this.config.heroesItemSelectTimer = setTimeout(() => {
                 this.config.heroesItemSelectTimer = -1;
                 if(this.data.chessboard[index]) {
-                    this.data.chessboardActiveHeroes = this.data.chessboard[index];
+                    this.data.chessboardActiveIndex = index;
                 }
             },600);
         },
@@ -226,17 +234,17 @@ window.a = new Vue({
             }
         },
         heroesRemove() {
-            this.$set(this.data.chessboard, this.data.chessboard.indexOf(this.data.chessboardActiveHeroes), 0);
-            this.$delete(this.data.heroesItem, this.data.chessboardActiveHeroes);
-            this.data.chessboardActiveHeroes = "";
+            this.$set(this.data.chessboard, this.data.chessboardActiveIndex, void 0);
+            this.data.chessboardActiveIndex = -1;
         },
         heroesItemsAdd() {
-            this.$set(this.data.heroesItem, this.data.chessboardActiveHeroes, this.data.chessboardActiveItems);
-            this.$forceUpdate();
+            this.$set(this.data.chessboard, this.data.chessboardActiveIndex, Object.assign(this.data.chessboard[this.data.chessboardActiveIndex], {
+                items: this.data.chessboardActiveItems
+            }));
+            this.data.chessboardActiveIndex = -1;
         },
         chessboardClear() {
-            this.data.chessboardActiveHeroes = "";
-            this.data.heroesItem = {};
+            this.data.chessboardActiveIndex = -1;
             this.setChessboard();
         },
         alert(msg, title = "提示", protocolType = "alert", alertType = "default", state = "ok") {

@@ -113,9 +113,11 @@ gulp.task('clean:css', () => {
 });
 
 gulp.task('replace:html', () => {
+    //TODO 此处替换@click为@tap，是因为小黑盒词条默认使用FastClick，但是在IOS在11之后已经修复click事件的300ms延时问题，使用了反而会造成点击卡顿，所以改为@tap使用小黑盒词条注入的点击事件
     return gulp.src('./dist/index.html')
         .pipe(replace('../assets/images', 'images'))
         .pipe(replace('../assets/fonts', 'fonts'))
+        .pipe(replace('@click="', '@tap="'))
         .pipe(cheerio($ => {
             $("script").remove();
             $("link").remove();
@@ -147,7 +149,7 @@ gulp.task('replace:html', () => {
 gulp.task('clipboard:copy', () => {
     return gulp.src('./dist/compile.txt')
         .pipe(clipboard())
-        .pipe(pipeconsole("编译内容文本已自动复制到剪贴板，可直接在需要的地方粘贴。"));
+        .pipe(pipeconsole("编译内容文本已自动复制到剪贴板，此代码目前仅支持在小黑盒APP的词条中正常运行。"));
 });
 
 gulp.task('build', gulp.series('clean', 'build:rev', 'replace:css', 'clean:css', 'replace:js', 'clean:js', 'replace:html', 'clipboard:copy', () => {

@@ -107,8 +107,8 @@ gulp.task('serve', () => {
             port: 55105,
             proxies: [
                 {
-                    source: "/api",
-                    target: "https://api.xiaoheihe.cn"
+                    source: "/wiki",
+                    target: "https://api.xiaoheihe.cn/wiki"
                 }
             ]
         }));
