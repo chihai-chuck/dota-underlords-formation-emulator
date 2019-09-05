@@ -6,9 +6,10 @@
                 "modules": false,
                 "targets": {
                     "browsers": [
-                        "Chrome >= 20",
-                        "iOS >= 9",
-                        "Android > 4"
+                        "Chrome >= 50",
+                        "Safari >= 10",
+                        "iOS >= 10",
+                        "Android >= 6"
                     ]
                 }
             }

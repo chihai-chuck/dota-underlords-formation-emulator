@@ -1,13 +1,33 @@
 {
     "name": "dota-underlords-formation-emulator",
     "version": "1.0.0",
+    "title": "dota-underlords-formation-emulator",
     "description": "刀塔霸业阵容模拟",
+    "homepage": "https://github.com/chihai-chuck/dota-underlords-formation-emulator",
+    "keywords": [
+        "dota",
+        "dota-underloadrs",
+        "underloadrs",
+        "formation"
+    ],
     "main": "gulpfile.js",
+    "files": [
+        "dist",
+        "src"
+    ],
     "scripts": {
         "dev": "gulp dev --gulpfile gulpfile-dev.js",
         "build": "gulp build"
     },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/chihai-chuck/dota-underlords-formation-emulator"
+    },
     "author": "chuck@chihai.me",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/chihai-chuck/dota-underlords-formation-emulator/issues"
+    },
     "devDependencies": {
         "@babel/core": "^7.5.0",
         "@babel/preset-env": "^7.5.0",
@@ -39,12 +59,13 @@
         "postcss-short": "^5.0.0"
     },
     "engines": {
-        "node": ">= 6.0.0",
-        "npm": ">= 3.0.0"
+        "node": ">= 10.0.0",
+        "npm": ">= 5.0.0"
     },
     "browserslist": [
-        "Chrome >= 20",
-        "iOS >= 9",
-        "Android >= 4"
+        "Chrome >= 50",
+        "Safari >= 10",
+        "iOS >= 10",
+        "Android >= 6"
     ]
 }
