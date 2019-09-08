@@ -296,14 +296,14 @@ window.a = new Vue({
             return desc[levels[index > 0 ? index - 1 : 0]];
         },
         copyText(str) {
-            const el = document.createElement("textarea");
+            const el = document.createElement("input");
             el.value = str;
-            el.setAttribute("readonly", "");
             el.style.position = "fixed";
             el.style.top = "-9999px";
             el.style.left = "-9999px";
             document.body.appendChild(el);
             el.select();
+            el.setSelectionRange(0, el.value.length);
             document.execCommand("copy");
             document.body.removeChild(el);
         },

@@ -32,7 +32,7 @@
                     </transition>
                 </li>
             </ul>
-            <transition name="vue-trans-equipment-box">
+            <!--<transition name="vue-trans-equipment-box">-->
                 <div class="equipment-box" v-if="data.chessboardActiveIndex>-1">
                     <div class="equipment">
                         <div class="add-list">
@@ -51,7 +51,7 @@
                         <button @click="heroesItemsAdd" v-text="`确认${data.chessboard[data.chessboardActiveIndex].items?'修改':'添加'}`"></button>
                     </div>
                 </div>
-            </transition>
+            <!--</transition>-->
             <dl class="equipment-list" v-if="heroesHaveItemList.length">
                 <dt v-pre>装备列表</dt>
                 <dd v-for="(hi,index) in heroesHaveItemList"
