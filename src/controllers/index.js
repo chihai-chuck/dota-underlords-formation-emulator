@@ -104,7 +104,7 @@ window.a = new Vue({
             this.getAlliancesData(),
             this.getItemsData()
         ]).then(() => {
-            const formationData = new URLSearchParams(location.search).get("s");
+            const formationData = new URLSearchParams(location.search).get("duFormation");
             if(formationData) {
                 this.restoreFormationURL(formationData);
             }
