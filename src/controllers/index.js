@@ -317,8 +317,9 @@ window.a = new Vue({
                 if(data.items) chessman.s = data.items;
                 temp.push(chessman);
             });
-
-            this.copyText(location.href + "?s=" + encodeURIComponent(window.btoa(JSON.stringify(temp))));
+            const url = new URL(location.href);
+            url.searchParams.set("duFormation", encodeURIComponent(window.btoa(JSON.stringify(temp))));
+            this.copyText(url.href);
             this.alert("保存的阵容链接已复制到剪贴板");
         },
         restoreFormationURL(data) {
