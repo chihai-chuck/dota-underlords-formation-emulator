@@ -61,7 +61,7 @@
                 </dd>
             </dl>
         </div>
-        <dl class="feature-box" v-if="chessboardCount">
+        <dl class="feature-box" v-if="chessboardValuable.length">
             <dt v-pre>英雄特性</dt>
             <dd v-for="(heroesList,index) in chessboardHeroesAlliancesSort(data.chessboardHeroesAlliances)"
                 :key="index"
@@ -81,6 +81,9 @@
                 </div>
             </dd>
         </dl>
+        <div class="save-formation">
+            <button @click="createFormationURL">保存阵容</button>
+        </div>
 
         <transition name="vue-trans-fade">
             <div ref="heroesListPopup"

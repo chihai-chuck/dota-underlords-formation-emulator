@@ -65,8 +65,8 @@ window.a = new Vue({
         }
     },
     computed: {
-        chessboardCount() {
-            return this.data.chessboard.filter(i => i).length;
+        chessboardValuable() {
+            return this.data.chessboard.filter(i => i);
         },
         heroesHaveItemList() {
             return this.data.chessboard.filter(i => i && i.items);
@@ -99,79 +99,90 @@ window.a = new Vue({
     },
     created() {
         this.setChessboard();
-        this.getHeroesData();
-        this.getAlliancesData();
-        this.getItemsData();
+        Promise.all([
+            this.getHeroesData(),
+            this.getAlliancesData(),
+            this.getItemsData()
+        ]).then(() => {
+            const formationData = new URLSearchParams(location.search).get("s");
+            if(formationData) {
+                this.restoreFormationURL(formationData);
+            }
+        });
     },
     methods: {
         setChessboard() {
             this.data.chessboard = new Array(32).fill();
         },
         getHeroesData() {
-            fetch(this.config.apiUrlPrefix + "310739").then(res => res.json()).then(res => {
-                const data = res.result.table;
-                const keys = data[0];
-                const list = data.slice(3);
-                const temp = {};
-                for(let heroes of list) {
-                    const params = {};
-                    heroes.forEach((item, index) => {
-                        params[keys[index]] = item;
-                    });
-                    params.api_alliances1 = params.api_alliances1.split(",");
-                    params.api_alliances2 = params.api_alliances2.split(",");
-                    params.api_alliances = [...params.api_alliances1, ...params.api_alliances2];
-                    params.id_img = this.config.imageUrlPrefix + params.id_img + this.config.imageUrlSuffix;
-                    params.skill_img = this.config.imageUrlPrefix + params.skill_img + this.config.imageUrlSuffix;
-                    temp[params.api_id] = params;
-                    this.data.heroesPriceGroup[params.Grade1_buy].push(params);
-                    this.imgPreLoad(params.id_img);
-                    // this.imgPreLoad(params.skill_img);
-                }
-                console.log(temp)
-                console.log(this.data.heroesPriceGroup)
-                this.data.heroes = temp;
+            return new Promise(resolve => {
+                fetch(this.config.apiUrlPrefix + "310739").then(res => res.json()).then(res => {
+                    const data = res.result.table;
+                    const keys = data[0];
+                    const list = data.slice(3);
+                    const temp = {};
+                    for(let heroes of list) {
+                        const params = {};
+                        heroes.forEach((item, index) => {
+                            params[keys[index]] = item;
+                        });
+                        params.api_alliances1 = params.api_alliances1.split(",");
+                        params.api_alliances2 = params.api_alliances2.split(",");
+                        params.api_alliances = [...params.api_alliances1, ...params.api_alliances2];
+                        params.id_img = this.config.imageUrlPrefix + params.id_img + this.config.imageUrlSuffix;
+                        params.skill_img = this.config.imageUrlPrefix + params.skill_img + this.config.imageUrlSuffix;
+                        temp[params.api_id] = params;
+                        this.data.heroesPriceGroup[params.Grade1_buy].push(params);
+                        this.imgPreLoad(params.id_img);
+                        // this.imgPreLoad(params.skill_img);
+                    }
+                    this.data.heroes = temp;
+                    resolve();
+                });
             });
         },
         getAlliancesData() {
-            fetch(this.config.apiUrlPrefix + "311021").then(res => res.json()).then(res => {
-                const data = res.result.table;
-                const keys = data[0];
-                const list = data.slice(3);
-                const temp = {};
-                for(let alliances of list) {
-                    const params = {};
-                    alliances.forEach((item, index) => {
-                        params[keys[index]] = item;
-                    });
-                    params.api_des = JSON.parse(params.api_des);
-                    temp[params.api_id] = params;
-                }
-                console.log(temp)
-                this.data.alliances = temp;
+            return new Promise(resolve => {
+                fetch(this.config.apiUrlPrefix + "311021").then(res => res.json()).then(res => {
+                    const data = res.result.table;
+                    const keys = data[0];
+                    const list = data.slice(3);
+                    const temp = {};
+                    for(let alliances of list) {
+                        const params = {};
+                        alliances.forEach((item, index) => {
+                            params[keys[index]] = item;
+                        });
+                        params.api_des = JSON.parse(params.api_des);
+                        temp[params.api_id] = params;
+                    }
+                    this.data.alliances = temp;
+                    resolve();
+                });
             });
         },
         getItemsData() {
-            fetch(this.config.apiUrlPrefix + "308917").then(res => res.json()).then(res => {
-                const data = res.result.table;
-                const keys = data[0];
-                const list = data.slice(3);
-                const temp = {};
-                for(let items of list) {
-                    const params = {};
-                    items.forEach((item, index) => {
-                        params[keys[index]] = item;
-                    });
-                    params.id_img = this.config.imageUrlPrefix + params.id_img + this.config.imageUrlSuffix;
-                    temp[params.id] = params;
-                    if(params.tier) {
-                        this.data.itemsLevelGroup[params.tier].push(params);
+            return new Promise(resolve => {
+                fetch(this.config.apiUrlPrefix + "308917").then(res => res.json()).then(res => {
+                    const data = res.result.table;
+                    const keys = data[0];
+                    const list = data.slice(3);
+                    const temp = {};
+                    for(let items of list) {
+                        const params = {};
+                        items.forEach((item, index) => {
+                            params[keys[index]] = item;
+                        });
+                        params.id_img = this.config.imageUrlPrefix + params.id_img + this.config.imageUrlSuffix;
+                        temp[params.api_id] = params;
+                        if(params.tier) {
+                            this.data.itemsLevelGroup[params.tier].push(params);
+                        }
+                        this.imgPreLoad(params.id_img);
                     }
-                    this.imgPreLoad(params.id_img);
-                }
-                console.log(temp)
-                console.log(this.data.itemsLevelGroup)
-                this.data.items = temp;
+                    this.data.items = temp;
+                    resolve();
+                });
             });
         },
         heroesListClose(event) {
@@ -198,7 +209,7 @@ window.a = new Vue({
                 if(heroesData) {
                     this.data.chessboardChangeIndex = index;
                 } else {
-                    if(this.chessboardCount >= 10) {
+                    if(this.chessboardValuable.length >= 10) {
                         this.alert("最多添加10个棋子");
                     } else {
                         this.data.chessboardSelectIndex = index;
@@ -217,7 +228,7 @@ window.a = new Vue({
             this.visible.heroesList = false;
         },
         setItems(items) {
-            this.data.chessboardActiveItems = items.id;
+            this.data.chessboardActiveItems = items.api_id;
             this.visible.itemsList = false;
         },
         heroesItemSelectStart(index) {
@@ -228,7 +239,7 @@ window.a = new Vue({
                 if(this.data.chessboard[index]) {
                     this.data.chessboardActiveIndex = index;
                 }
-            },600);
+            }, 600);
         },
         heroesItemSelectMove() {
             clearTimeout(this.config.heroesItemSelectTimer);
@@ -281,9 +292,44 @@ window.a = new Vue({
         chessboardHeroesAlliancesDesc(alliances) {
             const desc = this.data.alliances[alliances].api_des;
             const levels = Object.keys(desc).map(Number);
-            const index = levels.findIndex(n=>this.chessboardHeroesAlliancesCount[alliances]<n);
-            console.log(desc)
-            return desc[levels[index>0?index-1:0]];
+            const index = levels.findIndex(n => this.chessboardHeroesAlliancesCount[alliances] < n);
+            return desc[levels[index > 0 ? index - 1 : 0]];
+        },
+        copyText(str) {
+            const el = document.createElement("textarea");
+            el.value = str;
+            el.setAttribute("readonly", "");
+            el.style.position = "fixed";
+            el.style.top = "-9999px";
+            el.style.left = "-9999px";
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand("copy");
+            document.body.removeChild(el);
+        },
+        createFormationURL() {
+            const temp = [];
+            this.chessboardValuable.forEach(data => {
+                const chessman = {
+                    h: data.heroes,
+                    i: data.index
+                };
+                if(data.items) chessman.s = data.items;
+                temp.push(chessman);
+            });
+
+            this.copyText(location.href + "?s=" + encodeURIComponent(window.btoa(JSON.stringify(temp))));
+            this.alert("保存的阵容链接已复制到剪贴板");
+        },
+        restoreFormationURL(data) {
+            JSON.parse(window.atob(decodeURIComponent(data))).forEach(item => {
+                this.$set(this.data.chessboard, item.i, {
+                    index: item.i,
+                    heroes: item.h,
+                    avatar: this.data.heroes[item.h].id_img,
+                    items: item.s
+                });
+            });
         }
     }
 });
