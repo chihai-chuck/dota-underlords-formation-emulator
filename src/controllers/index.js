@@ -318,8 +318,11 @@ window.a = new Vue({
                 temp.push(chessman);
             });
             const url = new URL(location.href);
-            url.searchParams.set("duFormation", encodeURIComponent(window.btoa(JSON.stringify(temp))));
-            this.copyText(url.href);
+            const newUrl = new URL(url.origin + url.pathname);
+            newUrl.searchParams.set("article_id", url.searchParams.get("article_id"));
+            newUrl.searchParams.set("wiki_id", url.searchParams.get("wiki_id"));
+            newUrl.searchParams.set("duFormation", encodeURIComponent(window.btoa(JSON.stringify(temp))));
+            this.copyText(newUrl.href);
             this.alert("保存的阵容链接已复制到剪贴板");
         },
         restoreFormationURL(data) {
