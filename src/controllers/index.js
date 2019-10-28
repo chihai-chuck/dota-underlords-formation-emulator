@@ -1,13 +1,16 @@
-window.a = new Vue({
+window.dotaUnderlordsFormationEmulator = new Vue({
     el: ".dota-underlords-formation-emulator",
     data() {
         return {
             config: {
-                apiUrlPrefix: location.origin + "/wiki/get_excel_data_for_dev/?wiki_id=1000000011&file_id=",
-                imageUrlPrefix: "//cdn.max-c.com/wiki/1000000011/",
-                imageUrlSuffix: "?v=9999",
-                heroesItemSelectTimer: -1,
-                alliancesColor: {
+                apiHeroesId: "310739", // API获取英雄数据的fileId
+                apiAlliancesId: "311021", // API获取联盟数据的fileId
+                apiItemsId: "308917", // API获取物品数据的fileId
+                apiUrlPrefix: location.origin + "/wiki/get_excel_data_for_dev/?wiki_id=1000000011&file_id=", // API获取数据的请求地址
+                imageUrlPrefix: "//cdn.max-c.com/wiki/1000000011/", // 图片链接前缀
+                imageUrlSuffix: "?v=9999", // 图片链接后缀
+                heroesItemSelectTimer: -1, // 用于判断在棋盘格子中英雄点击或长按的计时器
+                alliancesColor: { // 联盟图标配色
                     "blood_bound": "#567919", // 血亲
                     "primordial": "#00adcd", // 太古
                     "elusive": "#4877aa", // 无踪
@@ -66,7 +69,7 @@ window.a = new Vue({
     },
     computed: {
         chessboardValuable() {
-            return this.data.chessboard.filter(i => i);
+            return this.data.chessboard.filter(Boolean);
         },
         heroesHaveItemList() {
             return this.data.chessboard.filter(i => i && i.items);
@@ -85,7 +88,7 @@ window.a = new Vue({
         },
         "data.chessboard"(chessboard) {
             const temp = {};
-            chessboard.filter(i => i).forEach(data => {
+            for(let data of chessboard.filter(Boolean)) {
                 for(let alliances of this.data.heroes[data.heroes].api_alliances) {
                     if(temp[alliances]) {
                         temp[alliances].push(data.heroes);
@@ -93,7 +96,7 @@ window.a = new Vue({
                         temp[alliances] = [data.heroes];
                     }
                 }
-            });
+            }
             this.$set(this.data, "chessboardHeroesAlliances", Object.entries(temp));
         }
     },
@@ -116,7 +119,7 @@ window.a = new Vue({
         },
         getHeroesData() {
             return new Promise(resolve => {
-                fetch(this.config.apiUrlPrefix + "310739").then(res => res.json()).then(res => {
+                fetch(this.config.apiUrlPrefix + this.config.apiHeroesId).then(res => res.json()).then(res => {
                     const data = res.result.table;
                     const keys = data[0];
                     const list = data.slice(3);
@@ -143,7 +146,7 @@ window.a = new Vue({
         },
         getAlliancesData() {
             return new Promise(resolve => {
-                fetch(this.config.apiUrlPrefix + "311021").then(res => res.json()).then(res => {
+                fetch(this.config.apiUrlPrefix + this.config.apiAlliancesId).then(res => res.json()).then(res => {
                     const data = res.result.table;
                     const keys = data[0];
                     const list = data.slice(3);
@@ -163,7 +166,7 @@ window.a = new Vue({
         },
         getItemsData() {
             return new Promise(resolve => {
-                fetch(this.config.apiUrlPrefix + "308917").then(res => res.json()).then(res => {
+                fetch(this.config.apiUrlPrefix + this.config.apiItemsId).then(res => res.json()).then(res => {
                     const data = res.result.table;
                     const keys = data[0];
                     const list = data.slice(3);
@@ -309,14 +312,14 @@ window.a = new Vue({
         },
         createFormationURL() {
             const temp = [];
-            this.chessboardValuable.forEach(data => {
+            for(let data of this.chessboardValuable) {
                 const chessman = {
                     h: data.heroes,
                     i: data.index
                 };
                 if(data.items) chessman.s = data.items;
                 temp.push(chessman);
-            });
+            }
             const url = new URL(location.href);
             const newUrl = new URL(url.origin + url.pathname);
             newUrl.searchParams.set("article_id", url.searchParams.get("article_id"));
@@ -326,14 +329,14 @@ window.a = new Vue({
             this.alert("保存的阵容链接已复制到剪贴板");
         },
         restoreFormationURL(data) {
-            JSON.parse(window.atob(decodeURIComponent(data))).forEach(item => {
+            for(let item of JSON.parse(window.atob(decodeURIComponent(data)))) {
                 this.$set(this.data.chessboard, item.i, {
                     index: item.i,
                     heroes: item.h,
                     avatar: this.data.heroes[item.h].id_img,
                     items: item.s
                 });
-            });
+            }
         }
     }
 });
