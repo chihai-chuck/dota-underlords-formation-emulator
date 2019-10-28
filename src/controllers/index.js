@@ -157,6 +157,8 @@ window.dotaUnderlordsFormationEmulator = new Vue({
                             params[keys[index]] = item;
                         });
                         params.api_des = JSON.parse(params.api_des);
+                        params.api_maxHeroesCount = +params.api_maxHeroesCount;
+                        params.api_minHeroesCount = +params.api_minHeroesCount;
                         temp[params.api_id] = params;
                     }
                     this.data.alliances = temp;
@@ -179,6 +181,7 @@ window.dotaUnderlordsFormationEmulator = new Vue({
                         params.id_img = this.config.imageUrlPrefix + params.id_img + this.config.imageUrlSuffix;
                         temp[params.api_id] = params;
                         if(params.tier) {
+                            params.tier = +params.tier;
                             this.data.itemsLevelGroup[params.tier].push(params);
                         }
                         this.imgPreLoad(params.id_img);
