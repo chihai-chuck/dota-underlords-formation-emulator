@@ -33,7 +33,11 @@ window.dotaUnderlordsFormationEmulator = new Vue({
                     "scaled": "#4e45cc", // 鳞甲
                     "human": "#00bd9e", // 人族
                     "mage": "#35a0aa", // 法师
-                    "hunter": "#ce5b39" // 猎人
+                    "hunter": "#ce5b39", // 猎人
+                    "healer": "#45af53", // 医者
+                    "champion": "#8167a8", // 统御者
+                    "insect": "#4355d1", // 虫族
+                    "brute": "#43362d" // 蛮族
                 }
             },
             data: {
