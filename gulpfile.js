@@ -43,9 +43,7 @@ gulp.task('build:js', gulp.series('build:lib', () => {
 gulp.task('build:less', () => {
     return gulp.src('./src/styles/*.less')
         .pipe(less())
-        .pipe(base64({
-            maxImageSize: 10240
-        }))
+        .pipe(base64())
         .pipe(postcss([
             pxtorem({
                 rootValue: 20,
