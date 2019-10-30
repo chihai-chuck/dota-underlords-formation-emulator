@@ -336,13 +336,12 @@ window.dotaUnderlordsFormationEmulator = new Vue({
             this.alert("保存的阵容链接已复制到剪贴板");
         },
         restoreFormationURL(data) {
-            const code = decodeURIComponent(data);
             let jsonStr = "";
             // 之前BUG导致分享链接被url编码两次，解码时无法正常atob，此处代码为兼容解析之前BUG的分享链接
             try {
-                jsonStr = window.atob(code);
+                jsonStr = window.atob(data);
             } catch {
-                jsonStr = window.atob(decodeURIComponent(code));
+                jsonStr = window.atob(decodeURIComponent(data));
             }
             for(let item of JSON.parse(jsonStr)) {
                 this.$set(this.data.chessboard, item.i, {
