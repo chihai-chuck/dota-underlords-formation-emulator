@@ -121,58 +121,9 @@ window.dotaUnderlordsFormationEmulator = new Vue({
         setChessboard() {
             this.data.chessboard = new Array(32).fill();
         },
-        getHeroesData() {
+        getData(type) {
             return new Promise(resolve => {
-                fetch(this.config.apiUrlPrefix + this.config.apiHeroesId).then(res => res.json()).then(res => {
-                    const data = res.result.table;
-                    const keys = data[0];
-                    const list = data.slice(3);
-                    const temp = {};
-                    for(let heroes of list) {
-                        const params = {};
-                        heroes.forEach((item, index) => {
-                            params[keys[index]] = item;
-                        });
-                        params.api_alliances1 = params.api_alliances1.split(",");
-                        params.api_alliances2 = params.api_alliances2.split(",");
-                        params.api_alliances = [...params.api_alliances1, ...params.api_alliances2];
-                        params.id_img = this.config.imageUrlPrefix + params.id_img + this.config.imageUrlSuffix;
-                        params.skill_img = this.config.imageUrlPrefix + params.skill_img + this.config.imageUrlSuffix;
-                        temp[params.api_id] = params;
-                        this.data.heroesPriceGroup[params.Grade1_buy].push(params);
-                        this.imgPreLoad(params.id_img);
-                        // this.imgPreLoad(params.skill_img);
-                    }
-                    this.data.heroes = temp;
-                    resolve();
-                });
-            });
-        },
-        getAlliancesData() {
-            return new Promise(resolve => {
-                fetch(this.config.apiUrlPrefix + this.config.apiAlliancesId).then(res => res.json()).then(res => {
-                    const data = res.result.table;
-                    const keys = data[0];
-                    const list = data.slice(3);
-                    const temp = {};
-                    for(let alliances of list) {
-                        const params = {};
-                        alliances.forEach((item, index) => {
-                            params[keys[index]] = item;
-                        });
-                        params.api_des = JSON.parse(params.api_des);
-                        params.api_maxHeroesCount = +params.api_maxHeroesCount;
-                        params.api_minHeroesCount = +params.api_minHeroesCount;
-                        temp[params.api_id] = params;
-                    }
-                    this.data.alliances = temp;
-                    resolve();
-                });
-            });
-        },
-        getItemsData() {
-            return new Promise(resolve => {
-                fetch(this.config.apiUrlPrefix + this.config.apiItemsId).then(res => res.json()).then(res => {
+                fetch(this.config.apiUrlPrefix + this.config[`api${type.replace(type[0], type[0].toUpperCase())}Id`]).then(res => res.json()).then(res => {
                     const data = res.result.table;
                     const keys = data[0];
                     const list = data.slice(3);
@@ -182,18 +133,34 @@ window.dotaUnderlordsFormationEmulator = new Vue({
                         items.forEach((item, index) => {
                             params[keys[index]] = item;
                         });
-                        params.id_img = this.config.imageUrlPrefix + params.id_img + this.config.imageUrlSuffix;
+                        this.dataShim(type, params);
                         temp[params.api_id] = params;
-                        if(params.tier) {
-                            params.tier = +params.tier;
-                            this.data.itemsLevelGroup[params.tier].push(params);
-                        }
-                        this.imgPreLoad(params.id_img);
                     }
-                    this.data.items = temp;
+                    this.data[type] = temp;
                     resolve();
                 });
             });
+        },
+        /* 接口数据额外处理 */
+        dataShim(type, params) {
+            if(type === "heroes" || type === "items") { // 英雄或物品数据
+                params.id_img = this.config.imageUrlPrefix + params.id_img + this.config.imageUrlSuffix;
+                this.imgPreLoad(params.id_img);
+                if(type === "heroes") { // 英雄数据
+                    params.api_alliances1 = params.api_alliances1.split(",");
+                    params.api_alliances2 = params.api_alliances2.split(",");
+                    params.api_alliances = [...params.api_alliances1, ...params.api_alliances2];
+                    params.skill_img = this.config.imageUrlPrefix + params.skill_img + this.config.imageUrlSuffix;
+                    this.data.heroesPriceGroup[params.Grade1_buy].push(params);
+                } else if(params.tier) { // 物品数据，因为物品只有tier(梯队)数据需要特殊处理，所以判断params中有没有tier就可以知道是不是需要处理的物品数据了
+                    params.tier = +params.tier;
+                    this.data.itemsLevelGroup[params.tier].push(params);
+                }
+            } else if(type === "alliances") { // 联盟数据
+                params.api_des = JSON.parse(params.api_des);
+                params.api_maxHeroesCount = +params.api_maxHeroesCount;
+                params.api_minHeroesCount = +params.api_minHeroesCount;
+            }
         },
         heroesListClose(event) {
             if(event.target === this.$refs.heroesListPopup || event.target === this.$refs.heroesListPopupContent) {
