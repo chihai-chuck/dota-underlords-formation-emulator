@@ -67,7 +67,8 @@ window.dotaUnderlordsFormationEmulator = new Vue({
             },
             visible: {
                 heroesList: false,
-                itemsList: false
+                itemsList: false,
+                about: false
             }
         }
     },
@@ -107,9 +108,9 @@ window.dotaUnderlordsFormationEmulator = new Vue({
     created() {
         this.setChessboard();
         Promise.all([
-            this.getHeroesData(),
-            this.getAlliancesData(),
-            this.getItemsData()
+            this.getData("heroes"),
+            this.getData("alliances"),
+            this.getData("items")
         ]).then(() => {
             const formationData = new URLSearchParams(location.search).get("duFormation");
             if(formationData) {
@@ -170,6 +171,11 @@ window.dotaUnderlordsFormationEmulator = new Vue({
         itemsListClose(event) {
             if(event.target === this.$refs.itemsListPopup || event.target === this.$refs.itemsListPopupContent) {
                 this.visible.itemsList = false;
+            }
+        },
+        aboutClose(event) {
+            if(event.target === this.$refs.aboutPopup || event.target === this.$refs.aboutPopupContent) {
+                this.visible.about = false;
             }
         },
         selectHeroes(index) {
@@ -318,6 +324,27 @@ window.dotaUnderlordsFormationEmulator = new Vue({
                     items: item.s
                 });
             }
+        },
+        toUser(id) {
+            location.href = "heybox://" + encodeURIComponent(JSON.stringify({
+                "protocol_type": "openUser",
+                "user_id": id.toString()
+            }));
+        },
+        toTeamPage() {
+            /*W.appOpenWindow({
+                title: "小黑盒刀塔霸业百科团队",
+                url: "https://api.xiaoheihe.cn/wiki/get_article_for_app/?article_id=307846&wiki_id=1000000011"
+            });*/
+            location.href = "heybox://" + encodeURIComponent(JSON.stringify({
+                "protocol_type": "openWindow",
+                "navigation_bar": {
+                    "title": "小黑盒刀塔霸业百科团队"
+                },
+                "webview": {
+                    "url": "https://api.xiaoheihe.cn/wiki/get_article_for_app/?article_id=307846&wiki_id=1000000011"
+                }
+            }))
         }
     }
 });

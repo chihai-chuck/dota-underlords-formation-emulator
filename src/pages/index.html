@@ -17,7 +17,8 @@
         <p class="loading" v-cloak></p>
         <div class="formation-box">
             <p class="title">
-                阵容模拟<em v-pre>单击移动 长按添加装备</em>
+                <span @click="visible.about=true"><i class="icon-about"></i>阵容模拟</span>
+                <em v-pre>单击移动 长按添加装备</em>
                 <button @click="chessboardClear">清空棋盘</button>
             </p>
             <ul class="chessboard">
@@ -88,7 +89,7 @@
         <transition name="vue-trans-fade">
             <div ref="heroesListPopup"
                  class="dota-underlords-formation-emulator-popup"
-                 @tap.stop="heroesListClose"
+                 @click.stop="heroesListClose"
                  v-if="visible.heroesList">
                 <div class="dota-underlords-formation-emulator-popup-bg"></div>
                 <div ref="heroesListPopupContent"
@@ -112,7 +113,7 @@
         <transition name="vue-trans-fade">
             <div ref="itemsListPopup"
                  class="dota-underlords-formation-emulator-popup"
-                 @tap.stop="itemsListClose"
+                 @click.stop="itemsListClose"
                  v-if="visible.itemsList">
                 <div class="dota-underlords-formation-emulator-popup-bg"></div>
                 <div ref="itemsListPopupContent"
@@ -127,6 +128,40 @@
                                     :style="{backgroundImage:`url(${items.id_img})`}"
                                     @click="setItems(items)"></dd>
                             </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+        <transition name="vue-trans-fade">
+            <div ref="aboutPopup"
+                 class="dota-underlords-formation-emulator-popup"
+                 @click.stop="aboutClose"
+                 v-if="visible.about">
+                <div class="dota-underlords-formation-emulator-popup-bg"></div>
+                <div ref="aboutPopupContent"
+                     class="dota-underlords-formation-emulator-popup-content">
+                    <div class="dota-underlords-formation-emulator-about">
+                        <i class="icon-dota-underlords title">刀塔霸业阵容模拟器</i>
+                        <div class="article">
+                            <p>设计：<i class="icon-heybox">小黑盒</i></p>
+                            <p>程序：<span @click.prevent="toUser(875495)">柳飞花落</span></p>
+                            <p>数据：<span @click.prevent="toTeamPage">小黑盒刀塔霸业百科团队</span></p>
+                            <h5>更新记录</h5>
+                            <ul>
+                                <li>2019-10-30 优化API接口数据获取及处理的相关方法，新增模拟器简介和更新记录弹窗</li>
+                                <li>2019-10-29 适配新出的联盟，修复有些分享链接无法正常还原阵容的问题</li>
+                                <li>2019-10-28 修复因为数字与字符串转换可能引起的一些BUG</li>
+                                <li>2019-10-20 优化生成的阵容分享链接</li>
+                                <li>2019-09-08 新增阵容分享链接功能</li>
+                                <li>2019-08-30 初步完成所有需求功能</li>
+                                <li>2019-08-25 对接英雄特性</li>
+                                <li>2019-08-24 编写棋盘和装备规则逻辑代码</li>
+                                <li>2019-08-13 对接英雄数据</li>
+                                <li>2019-07-31 开始编写UI界面</li>
+                                <li>2019-07-30 立项制作</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
