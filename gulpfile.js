@@ -115,7 +115,7 @@ gulp.task('replace:html', () => {
     return gulp.src('./dist/index.html')
         .pipe(replace('../assets/images', 'images'))
         .pipe(replace('../assets/fonts', 'fonts'))
-        .pipe(replace('@click="', '@tap="'))
+        .pipe(replace('@click', '@tap'))
         .pipe(cheerio($ => {
             $("script").remove();
             $("link").remove();

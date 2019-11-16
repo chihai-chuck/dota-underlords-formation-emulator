@@ -63,7 +63,7 @@
             </dl>
         </div>
         <dl class="feature-box" v-if="chessboardValuable.length">
-            <dt v-pre>英雄特性</dt>
+            <dt v-pre>英&#xFEFF;雄特性</dt>
             <dd v-for="(heroesList,index) in chessboardHeroesAlliancesSort(data.chessboardHeroesAlliances)"
                 :key="index"
                 :class="{invalid:chessboardHeroesAlliancesCount[heroesList[0]]<data.alliances[heroesList[0]].api_minHeroesCount}">
@@ -95,11 +95,11 @@
                 <div ref="heroesListPopupContent"
                      class="dota-underlords-formation-emulator-popup-content">
                     <div class="dota-underlords-formation-emulator-heroes-list">
-                        <p v-pre>添加你的英雄</p>
+                        <p v-pre>添加你的英&#xFEFF;雄</p>
                         <div class="list">
                             <dl v-for="(hpg,key,index) in data.heroesPriceGroup"
                                 :key="index">
-                                <dt v-text="`费用：${key}`"></dt>
+                                <dt v-text="key==='underlord'?'霸\uFEFF主':`费用：${key}`"></dt>
                                 <dd v-for="heroes in hpg"
                                     :style="{backgroundImage:`url(${heroes.id_img})`}"
                                     @click="setHeroes(heroes)"></dd>
@@ -150,15 +150,16 @@
                             <p>数据：<span @click.prevent="toTeamPage">小黑盒刀塔霸业百科团队</span></p>
                             <h5>更新记录</h5>
                             <ul>
+                                <li>2019-11-16 棋盘支持添加霸&#xFEFF;主，修改棋盘中棋子的布局方式，避免在某些设备中棋子位置出现略微偏差的情况</li>
                                 <li>2019-10-30 优化API接口数据获取及处理的相关方法，新增模拟器简介和更新记录弹窗</li>
                                 <li>2019-10-29 适配新出的联盟，修复有些分享链接无法正常还原阵容的问题</li>
                                 <li>2019-10-28 修复因为数字与字符串转换可能引起的一些BUG</li>
                                 <li>2019-10-20 优化生成的阵容分享链接</li>
                                 <li>2019-09-08 新增阵容分享链接功能</li>
                                 <li>2019-08-30 初步完成所有需求功能</li>
-                                <li>2019-08-25 对接英雄特性</li>
+                                <li>2019-08-25 对接英&#xFEFF;雄特性</li>
                                 <li>2019-08-24 编写棋盘和装备规则逻辑代码</li>
-                                <li>2019-08-13 对接英雄数据</li>
+                                <li>2019-08-13 对接英&#xFEFF;雄数据</li>
                                 <li>2019-07-31 开始编写UI界面</li>
                                 <li>2019-07-30 立项制作</li>
                             </ul>

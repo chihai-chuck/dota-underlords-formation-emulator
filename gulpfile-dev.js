@@ -86,6 +86,7 @@ gulp.task('replace:html', () => {
         .pipe(replace('../controllers', 'controllers'))
         .pipe(replace('../assets/images', 'images'))
         .pipe(replace('../assets/fonts', 'fonts'))
+        .pipe(replace('@click', '@touchstart'))
         .pipe(gulp.dest('./dev'));
 });
 

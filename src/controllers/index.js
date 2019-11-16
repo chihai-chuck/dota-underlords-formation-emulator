@@ -37,7 +37,9 @@ window.dotaUnderlordsFormationEmulator = new Vue({
                     "healer": "#45af53", // 医者
                     "champion": "#8167a8", // 统御者
                     "insect": "#4355d1", // 虫族
-                    "brute": "#43362d" // 蛮族
+                    "brute": "#43362d", // 蛮族
+                    "underlord_anessix": "#104966", // 霸主-安纳西克斯
+                    "underlord_hobgen": "#4a004c", // 霸主-哈伯根
                 }
             },
             data: {
@@ -52,7 +54,8 @@ window.dotaUnderlordsFormationEmulator = new Vue({
                     "2": [],
                     "3": [],
                     "4": [],
-                    "5": []
+                    "5": [],
+                    "underlord": []
                 },
                 items: {},
                 itemsLevelGroup: {
@@ -150,7 +153,7 @@ window.dotaUnderlordsFormationEmulator = new Vue({
                 if(type === "heroes") { // 英雄数据
                     params.api_alliances1 = params.api_alliances1.split(",");
                     params.api_alliances2 = params.api_alliances2.split(",");
-                    params.api_alliances = [...params.api_alliances1, ...params.api_alliances2];
+                    params.api_alliances = Array.from(new Set([...params.api_alliances1, ...params.api_alliances2]));
                     params.skill_img = this.config.imageUrlPrefix + params.skill_img + this.config.imageUrlSuffix;
                     this.data.heroesPriceGroup[params.Grade1_buy].push(params);
                 } else if(params.tier) { // 物品数据，因为物品只有tier(梯队)数据需要特殊处理，所以判断params中有没有tier就可以知道是不是需要处理的物品数据了
